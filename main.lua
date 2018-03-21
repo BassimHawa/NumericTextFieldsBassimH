@@ -22,6 +22,7 @@ local randomNumber1
 local randomNumber2
 local userAnswer
 local correctAnswer
+local incorrectAnswer
 
 ------------------------------------------------------------------------------------------------------------------------------------
 --LOCAL FUNCTIONS
@@ -49,7 +50,7 @@ end
  	if ( event.phase == "began" ) then
 
  		--clear text field
- 		event.target.text = ""
+ 		event.target.text = " "
 
  	elseif ( event.phase == "submitted" ) then
 
