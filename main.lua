@@ -17,12 +17,12 @@ display.setDefault("background", 124/255, 249/255, 199/255)
 --create local variables
 local questionObject
 local correctObject
+local incorrectObject
 local numericField
 local randomNumber1
 local randomNumber2
 local userAnswer
 local correctAnswer
-local incorrectAnswer
 
 ------------------------------------------------------------------------------------------------------------------------------------
 --LOCAL FUNCTIONS
@@ -44,13 +44,17 @@ end
  	AskQuestion()
  end
 
+local function HideIncorrect()
+ 	incorrectObject.isVisible = false
+ 	AskQuestion()
+ end
+
+
  local function NumericFieldListener( event )
  	
  	--User begins editing "numericField"
  	if ( event.phase == "began" ) then
 
- 		--clear text field
- 		event.target.text = " "
 
  	elseif ( event.phase == "submitted" ) then
 
@@ -60,8 +64,14 @@ end
  		--if the user's answer and the correct answer are the same:
  		if (userAnswer == correctAnswer) then
  			correctObject.isVisible = true
- 			timer.performWithDelay(2000, HideCorrect)
- 		end
+ 			timer.performWithDelay(3000, HideCorrect)
+ 			event.target.text = ""
+
+ 		elseif (userAnswer ~= correctAnswer) then
+ 			incorrectObject.isVisible = true
+ 			timer.performWithDelay(3000, HideIncorrect)
+ 			event.target.text = ""
+  		end
  	end
 end
 
@@ -70,16 +80,21 @@ end
 ------------------------------------------------------------------------------------------------------------------------------------
 
 --displays a question and sets the colour
-questionObject = display.newText( "", display.contentWidth/3, display.contentHeight/2, nil, 50)
+questionObject = display.newText( "", display.contentWidth/3, display.contentHeight/3, nil, 55)
 questionObject:setTextColor(155/255, 42/255, 198/255)
 
 --Create the correct text object and make it invisible
-correctObject = display.newText( "Correct!", display.contentWidth/2, display.contentHeight*2/3, nil, 50)
+correctObject = display.newText( "Correct!", display.contentWidth/1.9, display.contentHeight/2, nil, 60)
 correctObject:setTextColor(155/255, 42/255, 198/255)
 correctObject.isVisible = false
 
+--Create the correct text object and make it invisible
+incorrectObject = display.newText( "Incorrect!", display.contentWidth/1.9, display.contentHeight/2, nil, 60)
+incorrectObject:setTextColor(255/255, 0/255, 0/255)
+incorrectObject.isVisible = false
+
 --create a numeric field
-numericField = native.newTextField( display.contentWidth/2, display.contentHeight/2, 150, 80 )
+numericField = native.newTextField( display.contentWidth/1.9, display.contentHeight/3, 170, 80 )
 numericField.inputType = "number"
 
 --add the event listener for the numeric field
