@@ -1,0 +1,33 @@
+local v = {}
+v[1] = display.newText(system.getInfo("name"),0,0, "Helvetica", 18)
+v[2] = display.newText(system.getInfo("model"),0,0, "Helvetica", 18)
+v[3] = display.newText(system.getInfo("platformName"),0,0, "Helvetica", 18)
+v[4] = display.newText(system.getInfo("platformVersion"),0,0, "Helvetica", 18)
+v[5] = display.newText(system.getInfo("build"),0,0, "Helvetica", 18)
+v[6] = display.newText(system.getPreference("ui", "language"),0,0, "Helvetica", 18)
+
+for i = 1, #v do
+    v[i]:setReferencePoint(display.TopLeftReferencePoint)
+    v[i].y = i * 20
+    v[i].x = 10
+end
+
+local fonts = native.getFontNames()
+
+local fontStr = {}
+local i = 1
+local col = 1
+local row = 1
+for k, v in pairs(fonts) do
+--    print(k,v)
+    fontStr[i] = display.newText(v .. " ??? ?????",0,0,v,14)
+    fontStr[i]:setReferencePoint(display.TopLeftReferencePoint)
+    fontStr[i].y = row * 18 + 128
+    fontStr[i].x = 10 + (col - 1) * 290
+    col = col + 1
+    if col > 2 then
+        col = 1
+        row = row + 1
+    end
+    i = i + 1
+end
