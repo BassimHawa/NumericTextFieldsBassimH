@@ -28,26 +28,19 @@ local correctAnswer
 local totalSeconds = 5
 local secondsLeft = 5
 local clockText
-local countDownTiomer
-local lives = 3
+local countDownTimer
+local lives = 5
 local heart1
 local heart2
+local heart3
+local heart4
 local points = 0
 local pointsObject
 local randomOperator
+local gameOver
 ------------------------------------------------------------------------------------------------------------------------------------
 --LOCAL FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
-local function UpdateTime()
-	
-	--decrement the number of seconds	
-	secondsLeft = secondsLeft - 1
-
-	--display the number of senconds left in the clock object
-
-
-end
-
 
 local function AskQuestion()
 	-- generate 2 random numbers between a max. and a min. number
@@ -82,6 +75,54 @@ local function AskQuestion()
 	end
 end
  
+local function UpdateTime()
+	
+	--decrement the number of seconds	
+	secondsLeft = secondsLeft - 1
+
+	--display the number of seconds left in the clock object
+	clockText.text = secondsLeft .. ""
+
+	if (secondsLeft == 0) then
+		--reset the number of seconds
+		secondsLeft = totalSeconds
+		lives = lives -1
+		AskQuestion()
+
+		if (lives == 4) then
+			heart1.isVisible = true
+			heart2.isVisible = true
+			heart3.isVisible = true
+			heart4.isVisible = false
+		elseif (lives == 3) then
+			heart1.isVisible = true
+			heart2.isVisible = true
+			heart3.isVisible = false
+			heart4.isVisible = false
+		elseif (lives == 2) then
+			heart1.isVisible = true
+			heart2.isVisible = false
+			heart3.isVisible = false
+			heart4.isVisible = false
+		elseif (lives == 1) then
+			heart1.isVisible = false
+			heart2.isVisible = false
+			heart3.isVisible = false
+			heart4.isVisible = false
+			gameOver.isVisible = true
+			numericField.isVisible = false
+			clockText.isVisible = false
+			pointsObject.isVisible = false
+			questionObject.isVisible = false
+		end
+	end
+end
+
+local function StartTimer()
+	-- create a countdown timer that loops indefinetly
+	countDownTimer = timer.performWithDelay(1000, UpdateTime, 0)
+end
+
  local function HideCorrect()
  	correctObject.isVisible = false
  	AskQuestion()
@@ -112,10 +153,43 @@ local function HideIncorrect()
  			points = points + 1
  			pointsObject.text = points 
 
- 		elseif (userAnswer ~= correctAnswer) then
+ 		elseif (userAnswer) then
+ 			lives = lives -1
  			incorrectObject.isVisible = true
  			timer.performWithDelay(2200, HideIncorrect)
  			event.target.text = ""
+
+		if (lives == 4) then
+			heart1.isVisible = true
+			heart2.isVisible = true
+			heart3.isVisible = true
+			heart4.isVisible = false
+		elseif (lives == 3) then
+			heart1.isVisible = true
+			heart2.isVisible = true
+			heart3.isVisible = false
+			heart4.isVisible = false
+		elseif (lives == 2) then
+			heart1.isVisible = true
+			heart2.isVisible = false
+			heart3.isVisible = false
+			heart4.isVisible = false
+		elseif (lives == 1) then
+			heart1.isVisible = false
+			heart2.isVisible = false
+			heart3.isVisible = false
+			heart4.isVisible = false
+		elseif (lives == 0) then
+			heart1.isVisible = false
+			heart2.isVisible = false
+			heart3.isVisible = false
+			heart4.isVisible = false
+			gameOver.isVisible = true
+			numericField.isVisible = false
+			clockText.isVisible = false
+			pointsObject.isVisible = false
+			questionObject.isVisible = false
+		end
   		end
  	end
 end
@@ -123,6 +197,32 @@ end
 ------------------------------------------------------------------------------------------------------------------------------------
 --OBJECT CREATION
 ------------------------------------------------------------------------------------------------------------------------------------
+--create the lives to display on the screen
+heart1 = display.newImageRect("Images/heart.png", 100, 100)
+heart1.x = display.contentWidth * 7/8
+heart1.y = display.contentHeight * 1/7
+
+heart2 = display.newImageRect("Images/heart.png", 100, 100)
+heart2.x = display.contentWidth * 6/8
+heart2.y = display.contentHeight * 1/7
+
+heart3 = display.newImageRect("Images/heart.png", 100, 100)
+heart3.x = display.contentWidth * 5/8
+heart3.y = display.contentHeight * 1/7
+
+heart4 = display.newImageRect("Images/heart.png", 100, 100)
+heart4.x = display.contentWidth * 4/8
+heart4.y = display.contentHeight * 1/7
+
+--create the gameover screen
+gameOver = display.newImageRect("Images/gameOver.png", 1100, 1100)
+gameOver.x = 500
+gameOver.y = 400
+gameOver.isVisible = false
+
+--create the clock object
+clockText = display.newText("", 100, 100, Arial, 55)
+clockText:setTextColor(1, 0, 0)
 
 --displays a question and sets the colour
 questionObject = display.newText( "", display.contentWidth/3, display.contentHeight/3, nil, 55)
@@ -157,3 +257,5 @@ numericField:addEventListener( "userInput", NumericFieldListener )
 
 --call the function to ask the question
 AskQuestion()
+UpdateTime()
+StartTimer()
