@@ -25,8 +25,8 @@ local randomNumber3
 local randomNumber4
 local userAnswer
 local correctAnswer
-local totalSeconds = 5
-local secondsLeft = 5
+local totalSeconds = 11
+local secondsLeft = 11
 local clockText
 local countDownTimer
 local lives = 5
