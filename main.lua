@@ -29,7 +29,7 @@ local totalSeconds = 11
 local secondsLeft = 11
 local clockText
 local countDownTimer
-local lives = 5
+local lives = 4
 local heart1
 local heart2
 local heart3
@@ -38,6 +38,8 @@ local points = 0
 local pointsObject
 local randomOperator
 local gameOver
+local gameOverSound = audio.loadSound("Sounds/dead.mp3")
+local gameOverSoundChannel 
 ------------------------------------------------------------------------------------------------------------------------------------
 --LOCAL FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -74,6 +76,37 @@ local function AskQuestion()
 		questionObject.text = randomNumber3 .. " X " .. randomNumber4 .. " = " 
 	end
 end
+
+local function UpdateHearts()
+	if (lives == 4) then
+		heart1.isVisible = true
+		heart2.isVisible = true
+		heart3.isVisible = true
+		heart4.isVisible = true
+	elseif (lives == 3) then
+			heart1.isVisible = true
+			heart2.isVisible = true
+			heart3.isVisible = true
+			heart4.isVisible = false
+	elseif (lives == 2) then
+			heart1.isVisible = true
+			heart2.isVisible = true
+			heart3.isVisible = false
+			heart4.isVisible = false
+	elseif (lives == 1) then
+			heart1.isVisible = true
+			heart2.isVisible = false
+			heart3.isVisible = false
+			heart4.isVisible = false
+
+	elseif (lives == 0) then
+			heart1.isVisible = false
+			heart2.isVisible = false
+			heart3.isVisible = false
+			heart4.isVisible = false
+			gameOverSoundChannel = audio.play(gameOverSound)
+	end
+end
  
 local function UpdateTime()
 	
@@ -87,35 +120,23 @@ local function UpdateTime()
 		--reset the number of seconds
 		secondsLeft = totalSeconds
 		lives = lives -1
-		AskQuestion()
+		UpdateHearts()
 
-		if (lives == 4) then
-			heart1.isVisible = true
-			heart2.isVisible = true
-			heart3.isVisible = true
-			heart4.isVisible = false
-		elseif (lives == 3) then
-			heart1.isVisible = true
-			heart2.isVisible = true
-			heart3.isVisible = false
-			heart4.isVisible = false
-		elseif (lives == 2) then
-			heart1.isVisible = true
-			heart2.isVisible = false
-			heart3.isVisible = false
-			heart4.isVisible = false
-		elseif (lives == 1) then
-			heart1.isVisible = false
-			heart2.isVisible = false
-			heart3.isVisible = false
-			heart4.isVisible = false
+		if (lives == 0) then
+
 			gameOver.isVisible = true
 			numericField.isVisible = false
 			clockText.isVisible = false
 			pointsObject.isVisible = false
 			questionObject.isVisible = false
+			incorrectObject.isVisible = false
+			correctObject.isVisible = false
+		else
+			AskQuestion()
 		end
 	end
+
+	
 end
 
 local function StartTimer()
@@ -148,49 +169,35 @@ local function HideIncorrect()
  		--if the user's answer and the correct answer are the same:
  		if (userAnswer == correctAnswer) then
  			correctObject.isVisible = true
- 			timer.performWithDelay(2200, HideCorrect)
+ 			timer.performWithDelay(2000, HideCorrect)
  			event.target.text = ""
  			points = points + 1
  			pointsObject.text = points 
+ 			secondsLeft = totalSeconds
 
- 		elseif (userAnswer) then
+ 		else
  			lives = lives -1
+ 			UpdateHearts()
  			incorrectObject.isVisible = true
- 			timer.performWithDelay(2200, HideIncorrect)
+ 			timer.performWithDelay(2000, HideIncorrect)
  			event.target.text = ""
+ 			secondsLeft = totalSeconds
 
-		if (lives == 4) then
-			heart1.isVisible = true
-			heart2.isVisible = true
-			heart3.isVisible = true
-			heart4.isVisible = false
-		elseif (lives == 3) then
-			heart1.isVisible = true
-			heart2.isVisible = true
-			heart3.isVisible = false
-			heart4.isVisible = false
-		elseif (lives == 2) then
-			heart1.isVisible = true
-			heart2.isVisible = false
-			heart3.isVisible = false
-			heart4.isVisible = false
-		elseif (lives == 1) then
-			heart1.isVisible = false
-			heart2.isVisible = false
-			heart3.isVisible = false
-			heart4.isVisible = false
-		elseif (lives == 0) then
-			heart1.isVisible = false
-			heart2.isVisible = false
-			heart3.isVisible = false
-			heart4.isVisible = false
-			gameOver.isVisible = true
-			numericField.isVisible = false
-			clockText.isVisible = false
-			pointsObject.isVisible = false
-			questionObject.isVisible = false
+ 			if (lives == 0) then
+
+				gameOver.isVisible = true
+				numericField.isVisible = false
+				clockText.isVisible = false
+				pointsObject.isVisible = false
+				questionObject.isVisible = false
+				incorrectObject.isVisible = false
+				correctObject.isVisible = false
+				gameOverSoundChannel = audio.play(gameOverSound)
+			else
+				AskQuestion()
+			end
 		end
-  		end
+ 				  	
  	end
 end
 
