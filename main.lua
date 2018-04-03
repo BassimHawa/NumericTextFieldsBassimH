@@ -40,6 +40,7 @@ local randomOperator
 local gameOver
 local gameOverSound = audio.loadSound("Sounds/dead.mp3")
 local gameOverSoundChannel 
+local winscreen
 ------------------------------------------------------------------------------------------------------------------------------------
 --LOCAL FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -50,7 +51,7 @@ local function AskQuestion()
 	randomNumber2 = math.random(0, 20)
 	randomNumber3 = math.random(0, 10)
 	randomNumber4 = math.random(0, 10)
-	randomOperator = math.random(1, 3)
+	randomOperator = math.random(1, 4)
 
 	if (randomOperator == 1) then
 		correctAnswer = randomNumber1 + randomNumber2
@@ -73,7 +74,13 @@ local function AskQuestion()
 		correctAnswer = randomNumber3 * randomNumber4
 	
 		--create question in text object
-		questionObject.text = randomNumber3 .. " X " .. randomNumber4 .. " = " 
+		questionObject.text = randomNumber3 .. " X " .. randomNumber4 .. " = "
+
+	elseif (randomOperator == 4) then
+		correctAnswer = randomNumber3 * randomNumber4 
+		randomNumber3 = correctAnswer
+		correctAnswer = randomNumber3 / randomNumber4
+		questionObject.text = randomNumber3 .. " / " .. randomNumber4 .. " = "  
 	end
 end
 
@@ -100,11 +107,19 @@ local function UpdateHearts()
 			heart4.isVisible = false
 
 	elseif (lives == 0) then
-			heart1.isVisible = false
-			heart2.isVisible = false
-			heart3.isVisible = false
-			heart4.isVisible = false
-			gameOverSoundChannel = audio.play(gameOverSound)
+		heart1.isVisible = false
+		heart2.isVisible = false
+		heart3.isVisible = false
+		heart4.isVisible = false
+		gameOverSoundChannel = audio.play(gameOverSound)
+	elseif (points == 4) then
+		winscreen.isVisible = true
+		numericField.isVisible = false
+		clockText.isVisible = false
+		pointsObject.isVisible = false
+		questionObject.isVisible = false
+		incorrectObject.isVisible = false
+		correctObject.isVisible = false
 	end
 end
  
@@ -122,18 +137,7 @@ local function UpdateTime()
 		lives = lives -1
 		UpdateHearts()
 
-		if (lives == 0) then
-
-			gameOver.isVisible = true
-			numericField.isVisible = false
-			clockText.isVisible = false
-			pointsObject.isVisible = false
-			questionObject.isVisible = false
-			incorrectObject.isVisible = false
-			correctObject.isVisible = false
-		else
-			AskQuestion()
-		end
+		
 	end
 
 	
@@ -183,21 +187,26 @@ local function HideIncorrect()
  			event.target.text = ""
  			secondsLeft = totalSeconds
 
- 			if (lives == 0) then
+ 		if (lives == 0) then
 
-				gameOver.isVisible = true
-				numericField.isVisible = false
-				clockText.isVisible = false
-				pointsObject.isVisible = false
-				questionObject.isVisible = false
-				incorrectObject.isVisible = false
-				correctObject.isVisible = false
-				gameOverSoundChannel = audio.play(gameOverSound)
-			else
-				AskQuestion()
-			end
+			gameOver.isVisible = true
+			numericField.isVisible = false
+			clockText.isVisible = false
+			pointsObject.isVisible = false
+			questionObject.isVisible = false
+			incorrectObject.isVisible = false
+			correctObject.isVisible = false
+		elseif (points == 4) then
+		   	winscreen.isVisible = true
+			numericField.isVisible = false
+	  		clockText.isVisible = false
+			pointsObject.isVisible = false
+			questionObject.isVisible = false
+			incorrectObject.isVisible = false				
+			correctObject.isVisible = false
+			
 		end
- 				  	
+ 	end			  	
  	end
 end
 
@@ -254,6 +263,12 @@ incorrectObject.isVisible = false
 --create a numeric field
 numericField = native.newTextField( display.contentWidth/1.9, display.contentHeight/3, 170, 80 )
 numericField.inputType = "number"
+
+--create a win background
+winscreen = display.newImageRect("Images/win.png",  1100, 1100)
+winscreen.x = 500
+winscreen.y = 400
+winscreen.isVisible = false
 
 --add the event listener for the numeric field
 numericField:addEventListener( "userInput", NumericFieldListener )
